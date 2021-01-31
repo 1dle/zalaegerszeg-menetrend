@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.MainMenuActivity"
+    >
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarMenu"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:title="@string/app_name"
+        />
+
+            <Button
+                android:id="@+id/btnMenuNearStops"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Közeli megállók"
+                app:layout_constraintEnd_toEndOf="@+id/btnMenuAllStops"
+                app:layout_constraintStart_toStartOf="@+id/btnMenuAllStops"
+                app:layout_constraintTop_toBottomOf="@+id/btnMenuAllStops" />
+
+            <Button
+                android:id="@+id/btnMenuAllStops"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Összes megálló"
+                app:layout_constraintEnd_toEndOf="@+id/btnMenuOnlineBus"
+                app:layout_constraintStart_toStartOf="@+id/btnMenuOnlineBus"
+                app:layout_constraintTop_toBottomOf="@+id/btnMenuOnlineBus" />
+
+    <Button
+        android:id="@+id/btnMenuOnlineBus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        android:text="Online buszok"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnReloadMenu" />
+
+    <Button
+        android:id="@+id/btnMenuLines"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Vonalak"
+        app:layout_constraintEnd_toEndOf="@+id/btnMenuNearStops"
+        app:layout_constraintStart_toStartOf="@+id/btnMenuNearStops"
+        app:layout_constraintTop_toBottomOf="@+id/btnMenuNearStops" />
+
+    <TextView
+        android:id="@+id/tvMenuMSG"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:singleLine="false"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="200dp"
+        android:layout_height="150dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarMenu"
+        app:srcCompat="@drawable/ic_logo" />
+
+    <Button
+        android:id="@+id/btnReloadMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:text="Újratöltés"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvMenuMSG" />
+
+</android.support.constraint.ConstraintLayout>
