@@ -3,6 +3,7 @@ package com.delzor.zb.csakbusz.activities
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
@@ -35,6 +36,7 @@ class SelectBusstopLineActivity : AppCompatActivity() {
 
         binding.rvBusStopLineList.layoutManager = LinearLayoutManager(this)
         tLines = intent.getBooleanExtra("LINES",false)
+
         if(tLines){
             supportActionBar!!.title = "Válaszd ki a járatot!"
 

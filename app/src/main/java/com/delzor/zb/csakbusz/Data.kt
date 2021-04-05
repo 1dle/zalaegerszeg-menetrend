@@ -1,6 +1,7 @@
 package com.delzor.zb.csakbusz
 
 import android.graphics.Color
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import okhttp3.*
 import org.jsoup.Jsoup
@@ -121,10 +122,12 @@ object Data {
         Data.client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 //println(e)
+                //Log.d("H_REQ", "failure, error: " + e!!.message)
             }
 
             override fun onResponse(call: Call?, response: Response?) {
                 var resp = response!!.body()!!.string().toString()
+                //Log.d("H_REQ", "req ok resp:" + resp)
                 resp = Jsoup.parse(resp).text()
 
                 val lines: MutableList<String> = resp.split("[]").toMutableList()

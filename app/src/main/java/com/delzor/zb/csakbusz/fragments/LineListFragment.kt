@@ -40,7 +40,7 @@ class LineListFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fetchLineByNum(Data._testLineNum) {
