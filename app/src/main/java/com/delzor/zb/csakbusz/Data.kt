@@ -1,6 +1,7 @@
 package com.delzor.zb.csakbusz
 
 import android.graphics.Color
+import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import okhttp3.*
 import org.jsoup.Jsoup
@@ -90,7 +91,7 @@ object Data {
                 if(resp.length < 2){
                     callback(Data.RESP.NODATA)
                 }else{
-                    var lines: MutableList<String> = resp!!.split("<br/>").toMutableList()
+                    val lines: MutableList<String> = resp.split("<br/>").toMutableList()
 
                     lines.removeAt(0) // Első sor tartalmazza a mezőneveket
 
@@ -114,25 +115,27 @@ object Data {
 
         val url = "http://zalaegerszeg.enykk.hu/php/sql.php?id=keres|%20"
 
-        var request = Request.Builder()
+        val request = Request.Builder()
                 .url(url)
                 .build()
 
         Data.client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 //println(e)
+                //Log.d("H_REQ", "failure, error: " + e!!.message)
             }
 
             override fun onResponse(call: Call?, response: Response?) {
                 var resp = response!!.body()!!.string().toString()
+                //Log.d("H_REQ", "req ok resp:" + resp)
                 resp = Jsoup.parse(resp).text()
 
-                var lines: MutableList<String> = resp!!.split("[]").toMutableList()
+                val lines: MutableList<String> = resp.split("[]").toMutableList()
 
                 //lines.removeAt(0) // Első sor tartalmazza a mezőneveket
 
                 for (line in lines) {
-                    var items = line.split("|")
+                    val items = line.split("|")
                     if(findLines){
                         if (items[0] == "vonal") {
                             val curr = SimpleLine(
@@ -165,7 +168,7 @@ object Data {
 
         val url = "http://zalaegerszeg.enykk.hu/php/sql.php?id=mod_megallo|" + busStopID
 
-        var request = Request.Builder()
+        val request = Request.Builder()
                 .url(url)
                 .build()
 
@@ -175,10 +178,10 @@ object Data {
             }
 
             override fun onResponse(call: Call?, response: Response?) {
-                var resp = response!!.body()!!.string().toString()
+                val resp = response!!.body()!!.string().toString()
                 //resp = Jsoup.parse(resp).text()
 
-                var lines: MutableList<String> = resp!!.split("\n").toMutableList()
+                val lines: MutableList<String> = resp.split("\n").toMutableList()
 
                 lines.removeAt(0) // Első sor tartalmazza a szülő osztály adatait
 
@@ -204,7 +207,7 @@ object Data {
 
         val url = "http://zalaegerszeg.enykk.hu/php/sql.php?id=gmaps|$lng|$lat"
 
-        var request = Request.Builder()
+        val request = Request.Builder()
                 .url(url)
                 .build()
 
@@ -214,12 +217,12 @@ object Data {
             }
 
             override fun onResponse(call: Call?, response: Response?) {
-                var resp = response!!.body()!!.string().toString()
+                val resp = response!!.body()!!.string().toString()
                 //resp = Jsoup.parse(resp).text()
                 if(resp.length < 2){
                     callback(Data.RESP.NODATA)
                 }else{
-                    var lines: MutableList<String> = resp!!.split("\n").toMutableList()
+                    val lines: MutableList<String> = resp.split("\n").toMutableList()
                     //lines.removeAt(0) // Első sor tartalmazza a szülő osztály adatait
                     var name = "asd"
                     for (line in lines) {
@@ -247,26 +250,30 @@ object Data {
 
     fun fetchLineData(lineID: Int, callback: (messages : MutableList<String>) -> Unit) {
         selectedSubLine.id = lineID
-        var messages = mutableListOf<String>()
+        val messages = mutableListOf<String>()
         fetchPathTime {
             when(it){
                 Data.RESP.NODATA -> messages.add("NO_PATHTIME")
                 Data.RESP.ERROR -> messages.add("ERR_PATHTIME")
+                Data.RESP.SUCCESSFUL -> {}
             }
             fetchStartTimes{
                 when(it){
                     Data.RESP.NODATA -> messages.add("NO_STARTTIMES")
                     Data.RESP.ERROR -> messages.add("ERR_STARTTIMES")
+                    Data.RESP.SUCCESSFUL -> {}
                 }
                 fetchLineStopSpots{
                     when(it){
                         Data.RESP.NODATA -> messages.add("NO_STOPSPOTS")
                         Data.RESP.ERROR -> messages.add("ERR_STOPSPOTS")
+                        Data.RESP.SUCCESSFUL -> {}
                     }
                     fetchLinePath {
                         when(it){
                             Data.RESP.NODATA -> messages.add("NO_LINEPATH")
                             Data.RESP.ERROR -> messages.add("ERR_LINEPATH")
+                            Data.RESP.SUCCESSFUL -> {}
                         }
                         callback(messages)
                     }
@@ -278,7 +285,7 @@ object Data {
     fun fetchPathTime(cb1: (Data.RESP) -> Unit) {
         val url = "http://zalaegerszeg.enykk.hu/php/sql.php?id=nyomvonal2|${selectedSubLine.id}|0"
 
-        var request = Request.Builder()
+        val request = Request.Builder()
                 .url(url)
                 .build()
 
@@ -289,22 +296,22 @@ object Data {
             }
 
             override fun onResponse(call: Call?, response: Response?) {
-                var resp = response!!.body()!!.string().toString()
+                val resp = response!!.body()!!.string().toString()
                 //resp = Jsoup.parse(resp).text()
                 //println("resp" + resp)
 
-                var pathTime = mutableListOf<Int>()
+                val pathTime = mutableListOf<Int>()
 
                 if (resp.length < 2) {
                     cb1(Data.RESP.NODATA)
                 } else {
-                    var lines: MutableList<String> = resp!!.split("[]").toMutableList()
+                    val lines: MutableList<String> = resp.split("[]").toMutableList()
 
                     //lines.removeAt(0) // Első sor tartalmazza a mezőneveket
 
                     for (line in lines) {
-                        var items = line.split("|")
-                        var curr = items[4].toInt()
+                        val items = line.split("|")
+                        val curr = items[4].toInt()
                         pathTime.add(curr)
                     }
                     selectedSubLine.pathtime = pathTime

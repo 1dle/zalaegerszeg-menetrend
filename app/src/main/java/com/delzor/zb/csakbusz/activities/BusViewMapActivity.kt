@@ -1,8 +1,8 @@
 package com.delzor.zb.csakbusz.activities
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.delzor.zb.csakbusz.Bus
 import com.delzor.zb.csakbusz.Data
 import com.delzor.zb.csakbusz.Utils.addZeroes
@@ -10,6 +10,7 @@ import com.delzor.zb.csakbusz.Data.RESP
 import com.delzor.zb.csakbusz.R
 import com.delzor.zb.csakbusz.Utils
 import com.delzor.zb.csakbusz.adapters.TopBusListAdapter
+import com.delzor.zb.csakbusz.databinding.ActivityBusViewMapBinding
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -20,7 +21,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import okhttp3.*
 import java.io.IOException
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import kotlinx.android.synthetic.main.activity_bus_view_map.*
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
 
@@ -30,17 +30,20 @@ class BusViewMapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private var moveTo: Boolean = true
     private var currBusList: MutableList<Bus> = mutableListOf()
+    private lateinit var binding: ActivityBusViewMapBinding
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_bus_view_map)
+        binding = ActivityBusViewMapBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        rvScreenTopBusList.layoutManager = LinearLayoutManager(this)
+        binding.rvScreenTopBusList.layoutManager = LinearLayoutManager(this)
     }
 
     override fun onStop() {
@@ -73,53 +76,55 @@ class BusViewMapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
     fun fetchBusData(callback:(resp: Data.RESP) -> Unit){
-        val extraBus = intent.extras.get("BUS").toString()
-        title = extraBus
-        val busz: String = addZeroes(extraBus)
-        val url = "http://webgyor.kvrt.hu/csaoajax/sql-cs.php?vonal_irany=ZE$busz:O,V"
-        // ZE001|O|VasĂştĂĄllomĂĄs-KovĂĄcs K.tĂŠr-AndrĂĄshida |46.84522250 |16.84416972 |2374|1
+        if(intent.hasExtra("BUS")){
+            val extraBus = intent.extras!!.get("BUS").toString()
+            title = extraBus
+            val busz: String = addZeroes(extraBus)
+            val url = "http://webgyor.kvrt.hu/csaoajax/sql-cs.php?vonal_irany=ZE$busz:O,V"
+            // ZE001|O|VasĂştĂĄllomĂĄs-KovĂĄcs K.tĂŠr-AndrĂĄshida |46.84522250 |16.84416972 |2374|1
 
-        var request = Request.Builder()
-                .url(url)
-                .build()
-        Data.client.newCall(request).enqueue(object: Callback{
-            override fun onFailure(call: Call?, e: IOException?) {
+            val request = Request.Builder()
+                    .url(url)
+                    .build()
+            Data.client.newCall(request).enqueue(object: Callback{
+                override fun onFailure(call: Call?, e: IOException?) {
 
-                //println(e)
-                callback(Data.RESP.ERROR)
-            }
-
-            override fun onResponse(call: Call?, response: Response?) {
-                val resp = response!!.body()!!.string().toString()
-                if(resp.length < 2){
-                    //nincs már ez a busz
-                    callback(Data.RESP.NODATA)
-                }else{
-                    //print(resp)
-                    var lines: MutableList<String> = resp!!.split("<br/>").toMutableList()
-
-                    lines.removeAt(0) // Első sor tartalmazza a mezőneveket
-
-                    for(item in lines){
-                        val busdata = item.split("|")
-
-                        val bus = Bus(
-                                busdata[1].trim(), //irány : O
-                                busdata[2].trim(), //név :   Vasutallomas - KK - stb.
-                                busdata[0].trim(), //szám :  24
-                                busdata[3].trim(), //lat :   46.546465
-                                busdata[4].trim()  //lng :   16.34234
-                        )
-                        //println(bus.name)
-                        currBusList.add(bus)
-                        //val bus1 = Bus("ASD", "ASD", "8","46.84","16.84389") currBusList.add(bus1)
-
-                    }
-                    callback(Data.RESP.SUCCESSFUL)
+                    //println(e)
+                    callback(Data.RESP.ERROR)
                 }
 
-            }
-        })
+                override fun onResponse(call: Call?, response: Response?) {
+                    val resp = response!!.body()!!.string().toString()
+                    if(resp.length < 2){
+                        //nincs már ez a busz
+                        callback(Data.RESP.NODATA)
+                    }else{
+                        //print(resp)
+                        val lines: MutableList<String> = resp.split("<br/>").toMutableList()
+
+                        lines.removeAt(0) // Első sor tartalmazza a mezőneveket
+
+                        for(item in lines){
+                            val busdata = item.split("|")
+
+                            val bus = Bus(
+                                    busdata[1].trim(), //irány : O
+                                    busdata[2].trim(), //név :   Vasutallomas - KK - stb.
+                                    busdata[0].trim(), //szám :  24
+                                    busdata[3].trim(), //lat :   46.546465
+                                    busdata[4].trim()  //lng :   16.34234
+                            )
+                            //println(bus.name)
+                            currBusList.add(bus)
+                            //val bus1 = Bus("ASD", "ASD", "8","46.84","16.84389") currBusList.add(bus1)
+
+                        }
+                        callback(Data.RESP.SUCCESSFUL)
+                    }
+
+                }
+            })
+        }
     }
     fun addBusMarkers(){
         mMap.clear()
@@ -160,7 +165,7 @@ class BusViewMapActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        runOnUiThread { rvScreenTopBusList.adapter = TopBusListAdapter(mMap, currBusList) }
+        runOnUiThread { binding.rvScreenTopBusList.adapter = TopBusListAdapter(mMap, currBusList) }
 
 
     }

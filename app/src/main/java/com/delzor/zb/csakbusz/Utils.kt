@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.*
 import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.text.Html
 import android.text.Spanned
 
@@ -39,7 +40,7 @@ object Utils{
         val r = RectF((bm.width / 2 - tableWidthOffset).toFloat(), 0f, tableRight, 30f)
 
         //draw the new things to the input Bitmap
-        val canvas = Canvas(bm).also {
+        Canvas(bm).also {
             it.drawRoundRect(r, 8f, 8f, paintTextBackground)
             it.drawText(text, bm.width / 2f - if (tl > 1) 18f else 9f, if (tl == 3) 22f else 26f, paintText)
         }
@@ -98,7 +99,7 @@ object Utils{
 
         return backgrund
     }
-    fun bulletIcon(c: Context, bulletpos: Data.BULLETPOS): Bitmap{
+    fun bulletIcon(bulletpos: Data.BULLETPOS): Bitmap{
         val unit = 80
         val backgrund = Bitmap.createBitmap(unit/2,unit, Bitmap.Config.ARGB_8888 )
         val paint = Paint()
@@ -162,10 +163,10 @@ object Utils{
     }
 
     /**GOOGLE MAPS FUNCTIONS*/
-    fun midPoint(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Pair<Double,Double>{
-        var lat1 = lat1
-        var lon1 = lon1
-        var lat2 = lat2
+    fun midPoint(_lat1: Double, _lon1: Double, _lat2: Double, lon2: Double): Pair<Double,Double>{
+        var lat1 = _lat1
+        var lon1 = _lon1
+        var lat2 = _lat2
 
         val dLon = Math.toRadians(lon2 - lon1)
 
@@ -197,8 +198,9 @@ object Utils{
     /**VAN-E NET FUNFC */
     fun isOnline(act : Activity): Boolean {
         val cm = act.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val netInfo = cm.activeNetworkInfo
-        return netInfo != null && netInfo.isConnectedOrConnecting
+        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+        return activeNetwork?.isConnectedOrConnecting == true
+
     }
 
 }

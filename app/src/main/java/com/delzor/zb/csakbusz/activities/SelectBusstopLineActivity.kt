@@ -1,15 +1,13 @@
 package com.delzor.zb.csakbusz.activities
 
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import kotlinx.android.synthetic.main.activity_select_bus_stop.*
-import kotlinx.android.synthetic.main.dialog_search.view.*
 import org.jetbrains.anko.alert
-import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.toast
 import android.view.inputmethod.InputMethodManager
 import com.delzor.zb.csakbusz.BusStop
@@ -17,17 +15,28 @@ import com.delzor.zb.csakbusz.Data
 import com.delzor.zb.csakbusz.R
 import com.delzor.zb.csakbusz.Utils
 import com.delzor.zb.csakbusz.adapters.BusStopLineListAdapter
+import com.delzor.zb.csakbusz.databinding.ActivitySelectBusStopBinding
+import com.delzor.zb.csakbusz.databinding.DialogSearchBinding
 
 
 class SelectBusstopLineActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySelectBusStopBinding
+    private lateinit var dialogBinding: DialogSearchBinding
+
     var tLines = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_select_bus_stop)
-        setSupportActionBar(findViewById(R.id.toolbarSelectBusStop))
+        binding = ActivitySelectBusStopBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbarSelectBusStop)
 
-        rvBusStopLineList.layoutManager = LinearLayoutManager(this)
+        //dialogbox layout
+        dialogBinding = DialogSearchBinding.inflate(layoutInflater)
+
+        binding.rvBusStopLineList.layoutManager = LinearLayoutManager(this)
         tLines = intent.getBooleanExtra("LINES",false)
+
         if(tLines){
             supportActionBar!!.title = "Válaszd ki a járatot!"
 
@@ -35,7 +44,7 @@ class SelectBusstopLineActivity : AppCompatActivity() {
 
             Data.fetchBusStopORline(true) {
                 runOnUiThread {
-                    rvBusStopLineList.adapter = BusStopLineListAdapter(null, Data.allLineList)
+                    binding.rvBusStopLineList.adapter = BusStopLineListAdapter(null, Data.allLineList)
                 }
             }
         }else{
@@ -53,7 +62,7 @@ class SelectBusstopLineActivity : AppCompatActivity() {
 
             Data.fetchBusStopORline {
                 runOnUiThread {
-                    rvBusStopLineList.adapter = BusStopLineListAdapter(Data.busStopList)
+                    binding.rvBusStopLineList.adapter = BusStopLineListAdapter(Data.busStopList)
                 }
             }
         }
@@ -71,14 +80,14 @@ class SelectBusstopLineActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem) =
             when(item.itemId){
                 R.id.action_search -> {
-                    val view = layoutInflater.inflate(R.layout.dialog_search,null)
+                    val view = dialogBinding
 
                     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     val aDialog = alert {
                         title = "Keresés"
-                        customView = view
+                        customView = view.root
                     }.show()
-                    view.btnDialogSearch.onClick{
+                    view.btnDialogSearch.setOnClickListener{
                         val query = view.etDialogSearch.text.toString()
                         imm.hideSoftInputFromWindow(view.etDialogSearch.windowToken, 0)
                         aDialog.dismiss()
@@ -86,7 +95,7 @@ class SelectBusstopLineActivity : AppCompatActivity() {
                         val foundedItems = Utils.searchStopByName(query).toMutableList()
                         if(foundedItems.size > 0){
                             runOnUiThread {
-                                rvBusStopLineList.adapter = BusStopLineListAdapter(foundedItems)
+                                binding.rvBusStopLineList.adapter = BusStopLineListAdapter(foundedItems)
                             }
                         }else{
                             toast("Nincs találat.")

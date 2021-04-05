@@ -5,9 +5,9 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
+import androidx.core.app.ActivityCompat
 import com.delzor.zb.csakbusz.Data.currStopSpots
 import com.delzor.zb.csakbusz.Data.fetchNearStopSpot
 import com.delzor.zb.csakbusz.Data.fetchStopSpot
@@ -24,7 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import android.R.string.cancel
 import android.content.Intent
 import android.os.Build
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import com.delzor.zb.csakbusz.*
 import org.jetbrains.anko.*
 import java.lang.Exception
@@ -67,7 +67,7 @@ class BusStopsLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
     fun isTurnedOnLoc() {
-        if (!locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             alert("A GPS ki van kapcsolva. A közeli megállók lekéréséhez engedélyezned kell. Engedélyezed?"){
                 title = "GPS kikapcsolva"
                 yesButton { cancel ; startActivityForResult(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),2) }
@@ -127,7 +127,7 @@ class BusStopsLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        var busStopID = intent.extras.getString("BUS_STOP_ID","nope")
+        val busStopID = intent.extras!!.getString("BUS_STOP_ID","nope")
         nearStopsShow = intent.getBooleanExtra("NEAR",false)
 
 

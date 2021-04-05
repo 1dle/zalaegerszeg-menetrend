@@ -1,69 +1,83 @@
 package com.delzor.zb.csakbusz.activities
 
-import android.support.v7.app.AppCompatActivity
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.delzor.zb.csakbusz.*
-import kotlinx.android.synthetic.main.activity_main_menu.*
-import org.jetbrains.anko.*
-import org.jetbrains.anko.sdk25.coroutines.onClick
+import com.delzor.zb.csakbusz.databinding.ActivityMainMenuBinding
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.browse
+
 
 class MainMenuActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainMenuBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_menu)
-        setSupportActionBar(toolbarMenu)
+        binding = ActivityMainMenuBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbarMenu)
 
+        binding.btnMenuNearStops.setOnClickListener {
+            Intent(this, BusStopsLocationMapActivity::class.java).apply {
+                putExtra("NEAR",true)
+            }.also {
+                startActivity(it)
+            }
+        }
 
-        btnMenuNearStops.onClick {
-            startActivity<BusStopsLocationMapActivity>(
-                    "NEAR" to true
-            )
+        binding.btnMenuAllStops.setOnClickListener {
+            Intent(this, SelectBusstopLineActivity::class.java).also{
+                startActivity(it)
+            }
         }
-        btnMenuAllStops.onClick {
-            startActivity<SelectBusstopLineActivity>()
+        binding.btnMenuOnlineBus.setOnClickListener {
+            Intent(this, SelectBusActivity::class.java).also{
+                startActivity(it)
+            }
         }
-        btnMenuOnlineBus.onClick {
-            startActivity<SelectBusActivity>()
-        }
-        btnMenuLines.onClick {
-            startActivity<SelectBusstopLineActivity>(
-                    "LINES" to true
-            )
+        binding.btnMenuLines.setOnClickListener {
+
+            Intent(this, SelectBusstopLineActivity::class.java).apply {
+                putExtra("LINES",true)
+            }.also {
+                startActivity(it)
+            }
         }
 
         if (Utils.isOnline(this)) {
             showMenu(true)
         } else {
             showMenu(false)
-            tvMenuMSG.text = "Az alkalmazás működéséhez állandó internetkapcsolatra van szükség, kérlek kapcsold be, ha szeretnéd használni az alkalmazást"
-            tvMenuMSG.visibility = View.VISIBLE
-            btnReloadMenu.visibility = View.VISIBLE
+            binding.tvMenuMSG.text = "Az alkalmazás működéséhez állandó internetkapcsolatra van szükség, kérlek kapcsold be, ha szeretnéd használni az alkalmazást"
+            binding.tvMenuMSG.visibility = View.VISIBLE
+            binding.btnReloadMenu.visibility = View.VISIBLE
         }
-        btnReloadMenu.onClick {
-            if (Utils.isOnline(act)) {
+        binding.btnReloadMenu.setOnClickListener {
+            if (Utils.isOnline(this)) {
                 showMenu(true)
-                tvMenuMSG.visibility = View.GONE
-                btnReloadMenu.visibility = View.GONE
+                binding.tvMenuMSG.visibility = View.GONE
+                binding.btnReloadMenu.visibility = View.GONE
             }else{
-                tvMenuMSG.text = "Még mindig nincs net :/"
+                binding.tvMenuMSG.text = "Még mindig nincs net :/"
             }
         }
     }
     fun showMenu(show: Boolean){
         if(show){
-            btnMenuLines.visibility = View.VISIBLE
-            btnMenuOnlineBus.visibility = View.VISIBLE
-            btnMenuAllStops.visibility = View.VISIBLE
-            btnMenuNearStops.visibility = View.VISIBLE
+            binding.btnMenuLines.visibility = View.VISIBLE
+            binding.btnMenuOnlineBus.visibility = View.VISIBLE
+            binding.btnMenuAllStops.visibility = View.VISIBLE
+            binding.btnMenuNearStops.visibility = View.VISIBLE
         }else{
-            btnMenuLines.visibility = View.GONE
-            btnMenuOnlineBus.visibility = View.GONE
-            btnMenuAllStops.visibility = View.GONE
-            btnMenuNearStops.visibility = View.GONE
+            binding.btnMenuLines.visibility = View.GONE
+            binding.btnMenuOnlineBus.visibility = View.GONE
+            binding.btnMenuAllStops.visibility = View.GONE
+            binding.btnMenuNearStops.visibility = View.GONE
         }
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -79,7 +93,6 @@ class MainMenuActivity : AppCompatActivity() {
         val id = item.itemId
 
         if (id == R.id.action_info) {
-
             alert{
                 title = "Zalaegerszeg menetrend app"
                 message = Utils.setTextHTML(Data.infohtml)

@@ -1,14 +1,14 @@
 package com.delzor.zb.csakbusz.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.delzor.zb.csakbusz.*
 import com.delzor.zb.csakbusz.adapters.SimpleListAdapter
-import kotlinx.android.synthetic.main.fragment_buslines.*
+import com.delzor.zb.csakbusz.databinding.FragmentBuslinesBinding
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -18,21 +18,30 @@ import java.io.IOException
 
 class BuslinesFragment : Fragment() {
 
-
+    private var _binding: FragmentBuslinesBinding? = null
+    private val binding get() = _binding!!
 
     var currBusLines = mutableListOf<String>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_buslines, container, false)
+        _binding = FragmentBuslinesBinding.inflate(inflater, container, false)
+        return binding.root
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         fetchBusLinesFData{
-            act.runOnUiThread {
-                rvBuslinesFragment.layoutManager = LinearLayoutManager(context)
-                rvBuslinesFragment.adapter = SimpleListAdapter(currBusLines, 16f, true)
+            activity!!.runOnUiThread {
+                binding.rvBuslinesFragment.layoutManager = LinearLayoutManager(context)
+                binding.rvBuslinesFragment.adapter = SimpleListAdapter(currBusLines, 16f, true)
             }
             Data.numOfDownloadedPages++
         }

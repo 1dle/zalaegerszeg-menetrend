@@ -1,18 +1,17 @@
 package com.delzor.zb.csakbusz.activities
 
-import android.support.design.widget.TabLayout
-import android.support.v7.app.AppCompatActivity
+import com.google.android.material.tabs.TabLayout
+import androidx.appcompat.app.AppCompatActivity
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import android.os.Bundle
 import com.delzor.zb.csakbusz.Data._testStopSpot
 import com.delzor.zb.csakbusz.Data.numOfDownloadedPages
 import com.delzor.zb.csakbusz.Data.timer
 import com.delzor.zb.csakbusz.fragments.*
 
-import kotlinx.android.synthetic.main.activity_stop_data.*
 import org.jetbrains.anko.indeterminateProgressDialog
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
@@ -21,42 +20,38 @@ import com.delzor.zb.csakbusz.Data.currStopSpots
 import com.delzor.zb.csakbusz.Data.nearStopSpots
 import com.delzor.zb.csakbusz.R
 import com.delzor.zb.csakbusz.Utils
+import com.delzor.zb.csakbusz.databinding.ActivityStopDataBinding
 
 
 class StopDataActivity : AppCompatActivity() {
 
-    /**
-     * The [android.support.v4.view.PagerAdapter] that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * [android.support.v4.app.FragmentStatePagerAdapter].
-     */
-
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
+    private lateinit var binding: ActivityStopDataBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityStopDataBinding.inflate(layoutInflater)
 
-        _testStopSpot = intent.extras.get("STOPSPOT_ID").toString()
-        var near = intent.extras.getBoolean("NEAR",false)
+        setContentView(binding.root)
 
-        setContentView(R.layout.activity_stop_data)
+        _testStopSpot = intent.extras!!.get("STOPSPOT_ID").toString()
+        var near = intent.extras!!.getBoolean("NEAR",false)
 
-        toolbar.title = (if(near) Utils.nearStopSpotNameByID(_testStopSpot) else Data._testStopSpotName) + " - "+ (Utils.stopSpotNObyID(_testStopSpot, if (near) nearStopSpots else currStopSpots))
 
-        setSupportActionBar(toolbar)
+
+        binding.toolbar.title = (if(near) Utils.nearStopSpotNameByID(_testStopSpot) else Data._testStopSpotName) + " - "+ (Utils.stopSpotNObyID(_testStopSpot, if (near) nearStopSpots else currStopSpots))
+
+        setSupportActionBar(binding.toolbar)
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
         // Set up the ViewPager with the sections adapter.
-        container.adapter = mSectionsPagerAdapter
-        container.offscreenPageLimit = 2
+        binding.container.adapter = mSectionsPagerAdapter
+        binding.container.offscreenPageLimit = 2
 
-        container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
-        tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
+        binding.container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(binding.tabs))
+        binding.tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(binding.container))
 
         numOfDownloadedPages = 0
         val dialog = indeterminateProgressDialog("Adatok letöltése")

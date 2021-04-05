@@ -1,50 +1,62 @@
 package com.delzor.zb.csakbusz.fragments
 
+import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
+import androidx.viewpager.widget.ViewPager
 import com.delzor.zb.csakbusz.Data
 import com.delzor.zb.csakbusz.Data.fetchLineData
 import com.delzor.zb.csakbusz.Line
 import com.delzor.zb.csakbusz.adapters.LineListAdapter
 import com.delzor.zb.csakbusz.R
-import kotlinx.android.synthetic.main.activity_line_data.*
-import kotlinx.android.synthetic.main.fragment_lines_list.*
+import com.delzor.zb.csakbusz.databinding.FragmentLinesListBinding
+import org.jetbrains.anko.alert
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
-import org.jetbrains.anko.support.v4.act
-import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.indeterminateProgressDialog
+import org.jetbrains.anko.indeterminateProgressDialog
 import org.jetbrains.anko.yesButton
 import java.io.IOException
 
 class LineListFragment : Fragment() {
 
+    private var _binding: FragmentLinesListBinding? = null
+    private val binding get() = _binding!!
+
     var currLines = mutableListOf<Line>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = inflater.inflate(R.layout.fragment_lines_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentLinesListBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fetchLineByNum(Data._testLineNum) {
             when (it) {
-                Data.RESP.NODATA -> act.runOnUiThread{alert {
+                Data.RESP.NODATA -> activity!!.runOnUiThread{activity!!.alert {
                     title = "Nincs adat!"
                     message = "A mai napon ez a járat nem indul"
-                    yesButton { act.finish() }
-                    onCancelled { act.finish() }
+                    yesButton { activity!!.finish() }
+                    onCancelled { activity!!.finish() }
 
                 }.show()}
-                Data.RESP.SUCCESSFUL -> act!!.runOnUiThread {
-                    rvSublineList.layoutManager = LinearLayoutManager(context)
-                    rvSublineList.adapter = LineListAdapter(currLines) {
+                Data.RESP.SUCCESSFUL -> activity!!!!.runOnUiThread {
+                    binding.rvSublineList.layoutManager = LinearLayoutManager(context)
+                    binding.rvSublineList.adapter = LineListAdapter(currLines) {
                         // onclick
-                        var dlDialog = indeterminateProgressDialog("Adatok letöltése")
+                        var dlDialog = activity!!.indeterminateProgressDialog("Adatok letöltése")
                         dlDialog.setCancelable(false)
                         dlDialog.show()
                         val name = it.name
@@ -52,15 +64,15 @@ class LineListFragment : Fragment() {
                             if (!it.any {
                                         it.split("_")[0] == "ERR"
                                     }) {
-                                act!!.runOnUiThread {
+                                activity!!.runOnUiThread {
                                     dlDialog.hide()
                                     dlDialog.dismiss()
-                                    act!!.toolbar.title = name
+                                    activity!!.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar).title = name
                                     //println("Sikeres letöltés")
-                                    act!!.container.setCurrentItem(1, true)
+                                    activity!!.findViewById<ViewPager>(R.id.container).setCurrentItem(1, true)
                                 }
                             } else {
-                                act!!.finish()
+                                activity!!.finish()
                             }
 
                         }

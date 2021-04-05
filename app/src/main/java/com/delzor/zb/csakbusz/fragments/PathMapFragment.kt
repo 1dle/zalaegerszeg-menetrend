@@ -4,10 +4,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.viewpager.widget.ViewPager
 import com.delzor.zb.csakbusz.Data
 import com.delzor.zb.csakbusz.R
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -15,9 +16,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import kotlinx.android.synthetic.main.activity_line_data.*
-import org.jetbrains.anko.support.v4.act
-import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.yesButton
 
 
@@ -53,11 +52,11 @@ class PathMapFragment : Fragment(), OnMapReadyCallback {
         vizible = isVisibleToUser
         if (vizible) {
             if (Data.selectedSubLine.stopSpots == null) {
-                alert {
+                activity!!.alert {
                     title = "Figyelem!"
                     message = "Kérlek válassz a listából egy útvonalat először"
-                    yesButton { act.container.setCurrentItem(0, true) }
-                    onCancelled { act.container.setCurrentItem(0, true) }
+                    yesButton { activity!!.findViewById<ViewPager>(R.id.container).setCurrentItem(0, true) }
+                    onCancelled { activity!!.findViewById<ViewPager>(R.id.container).setCurrentItem(0, true) }
                 }.show()
             } else if (prevID != Data.selectedSubLine.id!!) {
                 addPath()
@@ -70,7 +69,7 @@ class PathMapFragment : Fragment(), OnMapReadyCallback {
 
     fun addPath() {
         if(Data.selectedSubLine.path!=null){
-            act!!.runOnUiThread {
+            activity!!.runOnUiThread {
                 mMap.clear()
                 mMap.addPolyline(
                         PolylineOptions()
@@ -99,7 +98,7 @@ class PathMapFragment : Fragment(), OnMapReadyCallback {
         val pm = BitmapFactory.decodeResource(context!!.resources, R.drawable.bus_stop_icon)
         val scale = 0.75f
         val smallmarker = Bitmap.createScaledBitmap(pm, (pm.width * scale).toInt(), (pm.height * scale).toInt(), false)
-        act!!.runOnUiThread {
+        activity!!.runOnUiThread {
             val builder = LatLngBounds.Builder()
             Data.selectedSubLine.stopSpots!!.forEach {
                 val poz = LatLng(it.lat.toDouble(), it.lng.toDouble())
