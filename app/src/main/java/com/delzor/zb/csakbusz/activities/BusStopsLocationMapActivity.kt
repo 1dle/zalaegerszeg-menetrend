@@ -67,7 +67,7 @@ class BusStopsLocationMapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
     fun isTurnedOnLoc() {
-        if (!locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             alert("A GPS ki van kapcsolva. A közeli megállók lekéréséhez engedélyezned kell. Engedélyezed?"){
                 title = "GPS kikapcsolva"
                 yesButton { cancel ; startActivityForResult(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS),2) }

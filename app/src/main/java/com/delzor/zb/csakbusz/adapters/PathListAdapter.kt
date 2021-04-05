@@ -29,7 +29,7 @@ class PathListAdapter(var stopSpots: MutableList<StopSpot>, val pathTimes: Mutab
             findViewById<TextView>(R.id.tvPathListName).text = busStop.name
             findViewById<TextView>(R.id.tvPathListTime).text = pathTime.toString()
             findViewById<ImageView>(R.id.ivPathListBullet).setImageBitmap(
-                    Utils.bulletIcon(cnt,
+                    Utils.bulletIcon(
                         when(position){
                             0 -> Data.BULLETPOS.FIRST
                             itemCount-1 -> Data.BULLETPOS.LAST
