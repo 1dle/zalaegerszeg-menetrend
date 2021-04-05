@@ -1,10 +1,11 @@
 package com.delzor.zb.csakbusz.adapters
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import com.delzor.zb.csakbusz.*
-import kotlinx.android.synthetic.main.list_item_pathlist.view.*
 
 class PathListAdapter(var stopSpots: MutableList<StopSpot>, val pathTimes: MutableList<Int>) : RecyclerView.Adapter<CustomViewHolder>() {
     override fun getItemCount(): Int {
@@ -24,15 +25,18 @@ class PathListAdapter(var stopSpots: MutableList<StopSpot>, val pathTimes: Mutab
         val busStop = stopSpots[position]
         val pathTime = pathTimes[position]
 
-        holder.view.tvPathListName.text = busStop.name
-        holder.view.tvPathListTime.text = pathTime.toString()
-        val bltPos = when(position){
-            0 -> Data.BULLETPOS.FIRST
-            itemCount-1 -> Data.BULLETPOS.LAST
-            else -> Data.BULLETPOS.MID
+        holder.view.run {
+            findViewById<TextView>(R.id.tvPathListName).text = busStop.name
+            findViewById<TextView>(R.id.tvPathListTime).text = pathTime.toString()
+            findViewById<ImageView>(R.id.ivPathListBullet).setImageBitmap(
+                    Utils.bulletIcon(cnt,
+                        when(position){
+                            0 -> Data.BULLETPOS.FIRST
+                            itemCount-1 -> Data.BULLETPOS.LAST
+                            else -> Data.BULLETPOS.MID
+                        }
+                    )
+            )
         }
-        holder.view.ivPathListBullet.setImageBitmap(Utils.bulletIcon(cnt, bltPos))
-
-
     }
 }

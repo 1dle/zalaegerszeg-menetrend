@@ -1,30 +1,33 @@
 package com.delzor.zb.csakbusz.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import com.delzor.zb.csakbusz.Data
 import com.delzor.zb.csakbusz.Data.fetchOnlineBus
 import com.delzor.zb.csakbusz.R
 import com.delzor.zb.csakbusz.adapters.BuslistAdapter
-import kotlinx.android.synthetic.main.activity_select_bus.*
+import com.delzor.zb.csakbusz.databinding.ActivitySelectBusBinding
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.yesButton
 
 class SelectBusActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivitySelectBusBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_select_bus)
+        binding = ActivitySelectBusBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        swiperefreshList.isRefreshing = true
+        binding.swiperefreshList.isRefreshing = true
 
-        rvBusList.layoutManager = GridLayoutManager(this, 3)
+        binding.rvBusList.layoutManager = GridLayoutManager(this, 3)
 
-        swiperefreshList.setOnRefreshListener {
+        binding.swiperefreshList.setOnRefreshListener {
             Data.onlinebusList = mutableListOf()
-            rvBusList.adapter = null
-            swiperefreshList.isRefreshing = true
+            binding.rvBusList.adapter = null
+            binding.swiperefreshList.isRefreshing = true
             fetchOnlineBus {
                 when(it){
                     Data.RESP.NODATA -> {alert {
@@ -44,8 +47,8 @@ class SelectBusActivity : AppCompatActivity() {
                         }.show()
                     }
                     Data.RESP.SUCCESSFUL -> runOnUiThread {
-                        rvBusList.adapter = BuslistAdapter(Data.onlinebusList)
-                        swiperefreshList.isRefreshing = false
+                        binding.rvBusList.adapter = BuslistAdapter(Data.onlinebusList)
+                        binding.swiperefreshList.isRefreshing = false
                     }
 
                 }
@@ -58,9 +61,9 @@ class SelectBusActivity : AppCompatActivity() {
 
     override fun onResume() {
 
-        rvBusList.adapter = null
+        binding.rvBusList.adapter = null
         Data.onlinebusList = mutableListOf()
-        swiperefreshList.isRefreshing = true
+        binding.swiperefreshList.isRefreshing = true
         fetchOnlineBus {
             when(it){
                 Data.RESP.NODATA -> {alert {
@@ -80,8 +83,8 @@ class SelectBusActivity : AppCompatActivity() {
                 }
                 }
                 Data.RESP.SUCCESSFUL -> runOnUiThread {
-                    rvBusList.adapter = BuslistAdapter(Data.onlinebusList)
-                    swiperefreshList.isRefreshing = false
+                    binding.rvBusList.adapter = BuslistAdapter(Data.onlinebusList)
+                    binding.swiperefreshList.isRefreshing = false
                 }
 
             }

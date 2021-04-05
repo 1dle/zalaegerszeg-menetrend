@@ -2,23 +2,25 @@ package com.delzor.zb.csakbusz.fragments
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.delzor.zb.csakbusz.*
 import com.delzor.zb.csakbusz.adapters.TimeTableListAdapter
-import kotlinx.android.synthetic.main.fragment_timetable.*
+import com.delzor.zb.csakbusz.databinding.FragmentTimetableBinding
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
-import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.io.IOException
 import java.util.*
 
 class TimetableFragment: Fragment(){
+
+    private var _binding: FragmentTimetableBinding? = null
+    private val binding get() = _binding!!
 
     var currTimeTable = mutableListOf<TimeTable>()
     val c = Calendar.getInstance()
@@ -28,49 +30,54 @@ class TimetableFragment: Fragment(){
     val cnt = context
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_timetable, container, false)
+        _binding = FragmentTimetableBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         val today = Utils.dateFormat(year,month,day)
-        tvDatePicked.text = today
+        binding.tvDatePicked.text = today
         fetchTimeTableData(today) {
             when(it){
                 Data.RESP.NODATA -> activity!!.runOnUiThread {
-                    tvTimeTableMSG.text = "Ezen a napon nem érkezik busz a megállóba"
-                    tvTimeTableMSG.visibility = View.VISIBLE
-                    rvTimeTable.adapter = null
+                    binding.tvTimeTableMSG.text = "Ezen a napon nem érkezik busz a megállóba"
+                    binding.tvTimeTableMSG.visibility = View.VISIBLE
+                    binding.rvTimeTable.adapter = null
                 }
                 Data.RESP.SUCCESSFUL -> activity!!.runOnUiThread {
-                    tvTimeTableMSG.visibility = View.GONE
-                    rvTimeTable.layoutManager = LinearLayoutManager(cnt)
-                    rvTimeTable.adapter = TimeTableListAdapter(currTimeTable)
+                    binding.tvTimeTableMSG.visibility = View.GONE
+                    binding.rvTimeTable.layoutManager = LinearLayoutManager(cnt)
+                    binding.rvTimeTable.adapter = TimeTableListAdapter(currTimeTable)
 
                 }
             }
             Data.numOfDownloadedPages++
         }
 
-        btnDatePicker.onClick{
+        binding.btnDatePicker.setOnClickListener{
 
-            val dpd = DatePickerDialog(activity, DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+            val dpd = DatePickerDialog(activity!!, DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
                 // Display Selected date in textbox
                 val picked = Utils.dateFormat(year,monthOfYear,dayOfMonth)
-                tvDatePicked.text = picked
+                binding.tvDatePicked.text = picked
                 currTimeTable = mutableListOf()
                 fetchTimeTableData(picked) {
                     when(it){
                         Data.RESP.NODATA -> activity!!.runOnUiThread {
-                            tvTimeTableMSG.text = "Ezen a napon nem érkezik busz a megállóba"
-                            tvTimeTableMSG.visibility = View.VISIBLE
-                            rvTimeTable.adapter = null
+                            binding.tvTimeTableMSG.text = "Ezen a napon nem érkezik busz a megállóba"
+                            binding.tvTimeTableMSG.visibility = View.VISIBLE
+                            binding.rvTimeTable.adapter = null
                         }
                         Data.RESP.SUCCESSFUL -> activity!!.runOnUiThread {
-                            tvTimeTableMSG.visibility = View.GONE
-                            rvTimeTable.layoutManager = LinearLayoutManager(cnt)
-                            rvTimeTable.adapter = TimeTableListAdapter(currTimeTable)
+                            binding.tvTimeTableMSG.visibility = View.GONE
+                            binding.rvTimeTable.layoutManager = LinearLayoutManager(cnt)
+                            binding.rvTimeTable.adapter = TimeTableListAdapter(currTimeTable)
 
                         }
                     }

@@ -1,13 +1,13 @@
 package com.delzor.zb.csakbusz.adapters
 
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.delzor.zb.csakbusz.R
 import com.delzor.zb.csakbusz.TimeTable
-import kotlinx.android.synthetic.main.list_item_timetable.view.*
 
 class TimeTableListAdapter(var itemList: MutableList<TimeTable>) : RecyclerView.Adapter<CustomViewHolder>() {
     var prev = ""
@@ -25,22 +25,26 @@ class TimeTableListAdapter(var itemList: MutableList<TimeTable>) : RecyclerView.
         val cnt = holder.view.context
         val tt = itemList[position]
 
-        holder.view.tvTimetableLine.text = tt.lineName
-        if (position == 0 || prev != tt.terminus) {
-            holder.view.tvTimetableTerminus.text = tt.terminus
-            holder.view.tvTimetableTerminus.visibility = View.VISIBLE
-        } else {
-            holder.view.tvTimetableTerminus.visibility = View.GONE
-        }
-        // Ha az utolsó ::
-        if (itemList.size - 1 == position && prev != tt.terminus) {
-            holder.view.tvTimetableTerminus.text = tt.terminus
-            holder.view.tvTimetableTerminus.visibility = View.VISIBLE
+        holder.view.apply{
+            findViewById<TextView>(R.id.tvTimetableLine).text = tt.lineName
+
+            findViewById<TextView>(R.id.tvTimetableTerminus).let{
+                if( (position == 0 || prev != tt.terminus) || //ha első
+                    (itemList.size - 1 == position && prev != tt.terminus) //ha utolsó
+                        ){
+                    it.text = tt.terminus
+                    it.visibility = View.VISIBLE
+                }else{
+                    it.visibility = View.GONE
+                }
+            }
+            findViewById<RecyclerView>(R.id.rvSubTimeTable).apply{
+                layoutManager = GridLayoutManager(cnt, 5)
+                adapter = SimpleListAdapter(tt.times)
+            }
+
         }
         prev = tt.terminus
-
-        holder.view.rvSubTimeTable.layoutManager = GridLayoutManager(cnt, 5)
-        holder.view.rvSubTimeTable.adapter = SimpleListAdapter(tt.times)
 
     }
 }

@@ -1,40 +1,41 @@
 package com.delzor.zb.csakbusz.activities
 
-import android.support.design.widget.TabLayout
-import android.support.v7.app.AppCompatActivity
+import com.google.android.material.tabs.TabLayout
+import androidx.appcompat.app.AppCompatActivity
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import android.os.Bundle
+import android.widget.Toolbar
 import com.delzor.zb.csakbusz.Data
 import com.delzor.zb.csakbusz.R
 import com.delzor.zb.csakbusz.Subline
+import com.delzor.zb.csakbusz.databinding.ActivityLineDataBinding
 import com.delzor.zb.csakbusz.fragments.LineListFragment
 import com.delzor.zb.csakbusz.fragments.PathListFragment
 import com.delzor.zb.csakbusz.fragments.PathMapFragment
 
-import kotlinx.android.synthetic.main.activity_line_data.*
-
 class LineDataActivity : AppCompatActivity() {
 
-
+    private lateinit var binding: ActivityLineDataBinding
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_line_data)
+        binding = ActivityLineDataBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        toolbar.title = intent.extras.getString("TITLE","Válassz a listából!").replace("- ","")
+        binding.toolbar.title = intent.extras!!.getString("TITLE","Válassz a listából!").replace("- ","")
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
-        container.offscreenPageLimit = 2
-        container.adapter = mSectionsPagerAdapter
+        binding.container.offscreenPageLimit = 2
+        binding.container.adapter = mSectionsPagerAdapter
 
-        container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
-        tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
+        binding.container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(binding.tabs))
+        binding.tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(binding.container))
 
     }
 
@@ -43,26 +44,6 @@ class LineDataActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    /*
-        override fun onCreateOptionsMenu(menu: Menu): Boolean {
-            // Inflate the menu; this adds items to the action bar if it is present.
-            menuInflater.inflate(R.menu.menu_line_data, menu)
-            return true
-        }
-
-        override fun onOptionsItemSelected(item: MenuItem): Boolean {
-            // Handle action bar item clicks here. The action bar will
-            // automatically handle clicks on the Home/Up button, so long
-            // as you specify a parent activity in AndroidManifest.xml.
-            val id = item.itemId
-
-            if (id == R.id.action_settings) {
-                return true
-            }
-
-            return super.onOptionsItemSelected(item)
-        }
-        */
     inner class SectionsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         override fun getItem(position: Int): Fragment {
