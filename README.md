@@ -49,3 +49,6 @@ Az alkalmazás  használatához állandó internetkapcsolatra van szükség. Az 
 - Az "Útvonal" fül segítségével ellenőrizhetjük, hogy  jól választottunk-e, ha nem visszatérhetünk a "Lista" fülre és  választhatunk másikat
 - Az "Útvonal" fülön láthatjuk, hogy a járat amelyet a "Lista" fülön pontosítottunk, milyen útvonalon  közlekedik és milyen megállókat érint
 - A "Menetidő"  fülön láthatjuk, hogy a kiválasztott járat mikor indul, illetve egy  lista mutatja az érintett megállókat és a menetidőt percben.
+
+## License
+Licensed under [GNU General Public License v3.0](LICENSE)
